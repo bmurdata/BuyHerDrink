@@ -36,14 +36,8 @@ jwt = JWTManager(app)
 
 
 @jwt.user_claims_loader
-def add_claims_to_jwt(
-    identity
-):  # Remember identity is what we define when creating the access token
-    if (
-        identity == 1
-    ):  # instead of hard-coding, we should read from a file or database to get a list of admins instead
-        return {"is_admin": True}
-    return {"is_admin": False}
+def add_claims_to_jwt(identity):  # Get list of admins- leaving 
+    return {"is_admin":True}
 
 
 # This method will check if a token is blacklisted, and will be called automatically when blacklist is enabled
@@ -111,6 +105,7 @@ api.add_resource(Username, "/username/<string:name>")
 api.add_resource(UserLogin, "/login")
 api.add_resource(TokenRefresh, "/refresh")
 api.add_resource(UserLogout, "/logout")
+
 db.init_app(app)
 app.run(port=5000, debug=True)
 if __name__ == "__main__":
