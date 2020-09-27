@@ -23,7 +23,7 @@ app.config["JWT_BLACKLIST_TOKEN_CHECKS"] = [
     "refresh",
 ]  # allow blacklisting for access and refresh tokens
 app.config['JWT_SECRET_KEY']='TestingMagic'
-app.config['JWT_TOKEN_LOCATION'] = ['cookies']
+app.config['JWT_TOKEN_LOCATION'] = ['cookies','header']
 app.config['JWT_COOKIE_CSRF_PROTECT'] = False
 api = Api(app)
 
@@ -120,9 +120,9 @@ api.add_resource(GetAll,"/getusers")
 api.add_resource(Post,"/mypost")
 api.add_resource(AllPosts,"/allposts")
 api.add_resource(PostRegister,"/createpost")
-if __name__ == "__main__":
+#if __name__ == "__main__":
     db.init_app(app)
-    app.run(port=5000, debug=True)
-else:
-    db.init_app(app)
-    app.run(port=5000, debug=True)
+#    app.run(port=5000, debug=True)
+#else:
+db.init_app(app)
+app.run()
