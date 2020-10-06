@@ -1,45 +1,49 @@
-
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package com.buyherdrink.controller;
 
-import com.buyherdrink.model.RequestData;
-import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.stream.Collectors;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.JOptionPane;
 
-public class post_drink_request_controller extends HttpServlet {
+/**
+ *
+ * @author aries
+ */
+public class get_highest_bidder extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String drinkRequestId = request.getParameter("drink_request_id");
         
-        String payload = "";
-        RequestData request_data = null;
-        Gson gson = new Gson();
-        
-        //reading the body content of the post request
-       if ("POST".equalsIgnoreCase(request.getMethod())) 
-        {
-           payload = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
-        }
-       
-       request_data = gson.fromJson(payload, RequestData.class);
-       
-       /*JOptionPane.showMessageDialog(null, request_data.getMeeting_budget());
-       JOptionPane.showMessageDialog(null, request_data.getRest_location());
-       JOptionPane.showMessageDialog(null, request_data.getMeeting_date());
-       JOptionPane.showMessageDialog(null, request_data.getMeeting_time());
-       JOptionPane.showMessageDialog(null, request_data.getRest_name());
-       JOptionPane.showMessageDialog(null, request_data.getRest_photo());
-       JOptionPane.showMessageDialog(null, request_data.getRest_rating());
-       JOptionPane.showMessageDialog(null, request_data.getRest_service_types());
-       JOptionPane.showMessageDialog(null, request_data.getRequest_purpose());*/
-       
-        
+        response.getWriter().print(""
+                + "{"
+                +       "\"request_id\": 24,"
+                +       "\"request_purpose\": \"Drink\","
+                +       "\"rest_location\": \"1913 Bronxdale Ave, The Bronx\","
+                +       "\"rest_name\": \"F&J Pine\","
+                +       "\"rest_rating\": 5,"
+                +       "\"rest_photo\": null,"
+                +       "\"rest_category_icon\": null,"
+                +       "\"rest_service_types\": null,"
+                +       "\"meeting_date\": \"09/04/2020\","
+                +       "\"meeting_time\": \"14:00\","
+                +       "\"meeting_budget\": \"$50.00\","
+                +       "\"added_message\": \"This request was so good it needed a 50.00 offer from me\","
+                +       "\"bidder_id\": 252,"
+                +       "\"bidder_propic\": null,"
+                +       "\"bidder_coverphoto\": null,"
+                +       "\"bidder_name\": \"Kristina Rodriquez\","
+                +       "\"bidder_gender\": \"female\","
+                +       "\"bidder_age\": 21,"
+                +       "\"bidder_address\": \"3423 River Ave, Albany, NY\""
+                + "}");
         
     }
 

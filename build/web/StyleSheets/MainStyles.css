@@ -24,6 +24,9 @@ body {
     font-family: "Roboto";
     font-size: 19px;
 }
+a{
+    text-decoration: none;
+}
 input[type="text"], select{
     border-radius: 0;
 }
@@ -126,7 +129,9 @@ span, p, option{
     margin:auto;
     z-index: 1001;
     position: fixed;
-    padding: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 10px;
     background-color: #98b3ff;
     box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3),0 1px 3px 1px rgba(60,64,67,0.15);
     width: 100%;
@@ -141,9 +146,7 @@ span, p, option{
     padding: 10px 0;
 }
 .MenuIcon{
-    margin-top: 10px;
-    margin-left: 10px;
-    float: left;
+    margin-top: -25px;
     position: relative;
 }
 /*#firstMenuIconBar{
@@ -221,22 +224,17 @@ span, p, option{
 }
 
 .LogoDiv{
-    margin-right: 10px;
-    width: 40px; 
-    height: 40px; 
-    float: right; 
-    background-color: white;
+    width: 60px;
 }
 .PageTitle{
-    width: calc(100% - 96px); 
-    float: right;
-    padding-top: 10px;
+    margin-left: 60px;
+    font-size: 17px;
     text-align: center;
     font-weight: bolder;
 }
 .ProfileDetailsDiv{
-    border-bottom: 1px solid #cacaca;
-    /*height: calc(100vh - 450px);*/
+    /*border-bottom: 1px solid #cacaca;
+    height: calc(100vh - 450px);*/
     width: 100%;
     position: relative;
 }
@@ -298,7 +296,7 @@ span, p, option{
     margin: auto;
     position: fixed;
     z-index: 101;
-    top: 60px;
+    top: 55px;
     /*height:calc(100% - 79px);*/
     height: 100vh;
     width: 100%;
@@ -361,7 +359,7 @@ span, p, option{
 }
 
 .MainMenu .SettingName{
-    border-bottom: 1px solid darkgrey;
+    /*border-bottom: #D9DADC 1px solid;*/
 }
 
 .ActivitiesAndDrinkOffersBtn {
@@ -427,7 +425,7 @@ span, p, option{
 
 #current_restaurants_list li{
     padding: 10px 5px;
-    border-bottom: 1px solid cadetblue;
+    /*border-bottom: 1px solid cadetblue;*/
 }
 
 .RequesteeCoverPhoto, .OffererCoverPhoto{
@@ -509,8 +507,6 @@ span, p, option{
 .RequesteeAdditionalMessage, .OffererAdditionalMessage{
     font-size: 14px;
     min-height: 120px;
-    border-top: 1px #cacaca solid;
-    border-bottom: 1px #cacaca solid;
     margin-top: 3px;
     margin-bottom: 3px;
     padding: 3px;
@@ -588,14 +584,20 @@ span, p, option{
     width: 100px !important;
     height: 100px !important;
     float: left !important;
-    border: 3px solid white;
+    border: 3px solid white !important;
+    opacity: 1 !important;
     overflow: hidden !important;
+    margin: 0 !important;
+    border-spacing: 0 !important;
+    padding: 0 !important;
 }
 #DrinkRequestsIframe{
     display: none;
+    min-height: 600px;
 }
 #DrinkOffersIframe{
     display: none;
+    min-height: 600px;
 }
 
 input[type=checkbox] {
@@ -642,7 +644,7 @@ input[type=radio]:checked {
     box-shadow: inset 20px 0 0 0 #4ED164;
 }
 
-#ExploreRestaurantsDiv, #viewFullProfileDiv, #settingsDiv, #notificationsDiv, #galleryDiv, #UserActivityDiv{
+#ExploreRestaurantsDiv, #viewFullProfileDiv, #settingsDiv, #notificationsDiv, #galleryDiv, #UserActivityDiv, #YourDrinkRequestsDiv{
     display: none;
 }
 #ExploreRestaurantsDiv table{
@@ -657,7 +659,7 @@ input[type=radio]:checked {
     background-color: #afe9ff;
     z-index: 1000;
     width: 100%;
-    height: 400px;
+    height: 500px;
     margin: auto;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
@@ -696,13 +698,17 @@ input[type=radio]:checked {
     text-align: center;
     box-shadow: #ccc 3px 3px 3px;
 }
-#dinner_dates_header{
+#dinner_dates_header, #your_drink_requests_header{
     position: fixed; 
     padding: 5px;
     width: 100%;
     background-color: black;
     padding-bottom: 15px;
     border-bottom: #4ED164 1px solid;
+}
+#your_drink_requests_header{
+    background-color: #afe9ff;
+    border-bottom: #98d7ff 1px solid;
 }
 #SearchResultDiv{
     padding: 5px;
@@ -801,7 +807,7 @@ input[type=radio]:checked {
     padding: 0 4px;
     padding-top: 1px;
 }
-#notificationsDiv, #galleryDiv, #UserActivityDiv{
+#notificationsDiv, #galleryDiv, #UserActivityDiv, #YourDrinkRequestsDiv{
     position: fixed;
     top: 0;
     left: 0;
@@ -809,11 +815,38 @@ input[type=radio]:checked {
     height: 100vh;
     overflow-y: auto;
     z-index: 1100;
-    background-color: black;
+    background-color: rgba(0,0,0,0.9);
     color: white;
 }
 
-
+#YourDrinkRequestsDiv, #notificationsDiv{
+    background-color: white !important;
+    color: black !important;
+}
+#YourDrinkRequestsListDiv, .each_your_drink_request_div{
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+.each_your_drink_request_div{
+    padding: 10px 0;
+    background-color: lightcyan;
+    border-radius: 10px;
+    margin-bottom: 5px;
+}
+.your_drink_request_delete_btn, .your_drink_request_update_btn{
+    padding: 10px 0;
+    width: 40%;
+    background-color: red;
+    border-radius: 4px;
+    color: white;
+    font-size: 14px;
+    text-align: center;
+}
+.your_drink_request_update_btn{
+    background-color: #4ED164;
+}
 .RestaurantListPopup {
   position: relative;
   display: inline-block;
@@ -859,6 +892,33 @@ input[type=radio]:checked {
   visibility: visible;
   -webkit-animation: fadeIn 1s;
   animation: fadeIn 1s;
+}
+.postpone_dinner_date_form, .cancel_dinner_date_form, .delete_drink_request_form{
+    display: none;
+    padding-bottom: 10px;
+}
+.postpone_dinner_date_fld, .postpone_dinner_time_fld{
+    width: 145px;
+    padding: 5px;
+    border: none;
+    border-radius: 5px !important;
+}
+.postpone_dinner_date_btns, .cancel_dinner_date_btns, .delete_drink_request_btns{
+    width: 300px;
+    display: flex;
+    justify-content: space-between;
+}
+.update_dinner_date_btn, .cancel_update_dinner_date_btn, ._cancel_dinner_date_no_btn, .cancel_dinner_date_yes_btn, .delete_drink_request_yes_btn, .delete_drink_request_no_btn{
+    border-radius: 5px;
+    background-color: #4ED164;
+    color: white;
+    padding: 10px 0;
+    font-size: 14px;
+    text-align: center;
+    width: 80px;
+}
+.cancel_update_dinner_date_btn, .cancel_dinner_date_yes_btn, .delete_drink_request_yes_btn{
+    background-color: crimson;
 }
 
 /* Add animation (fade in the popup) */

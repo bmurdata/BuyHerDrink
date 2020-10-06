@@ -1,5 +1,9 @@
 var SearchResultDiv = document.getElementById("SearchResultDiv");
 var search_page_start_page = document.getElementById("search_page_start_page");
+var no_available_drink_offers_msg = document.getElementById("no_available_drink_offers_msg");
+var no_available_drink_request_msg = document.getElementById("no_available_drink_request_msg");
+var ViewOffererFullProfileAndMakeOfferBtns = document.getElementsByClassName("ViewOffererFullProfileAndMakeOfferBtns")[0];
+var ViewRequesteeFullProfileAndMakeOfferBtns = document.getElementsByClassName("ViewRequesteeFullProfileAndMakeOfferBtns")[0];
 
 document.querySelector(".MainMenu").style.display = "none";
 document.cookie = "SameSite=None;";
@@ -162,8 +166,9 @@ var showFullProfileDiv = () => {
     let settingsDiv = document.getElementById("settingsDiv");*/
     
     //SetWindowTitle("Profile Details");
-    let fullProfileDiv = document.getElementById("viewFullProfileDiv");
-    fullProfileDiv.style.display = "block";
+    //let fullProfileDiv = document.getElementById("viewFullProfileDiv");
+    //fullProfileDiv.style.display = "block";
+    $( '#viewFullProfileDiv' ).toggle( 'up');
     /*UserProfileIframe.style.display = "none";
     DrinkRequestsIframe.style.display = "none";
     DrinkOffersIframe.style.display = "none";
@@ -212,41 +217,47 @@ $("#editUserProfileIcon").click(function(){
     fullProfileDiv.style.display = "none";
 });
 
+var showYourDrinkRequests = () => {
+    $("#YourDrinkRequestsDiv").toggle("up");
+};
+
 var showNotifications = () => {
-    let notificationsDiv = document.getElementById("notificationsDiv");
-    notificationsDiv.style.display = "block";
-    
+    $("#notificationsDiv").toggle("up");
 };
 
 var showGalleryDiv = () => {
-    let galleryDiv = document.getElementById("galleryDiv");
-    galleryDiv.style.display = "block";
+    $("#galleryDiv").toggle("up");
 };
 
 var showUserActivity = () => {
-    let UserActivityDiv = document.getElementById("UserActivityDiv");
-    UserActivityDiv.style.display = "block";
+    $("#UserActivityDiv").toggle("up");
 };
 
 var closeUserActivity = () => {
-    let UserActivityDiv = document.getElementById("UserActivityDiv");
-    UserActivityDiv.style.display = "none";
+    $("#UserActivityDiv").toggle("up");
 };
 
 var closeNotification = () => {
-    let notificationsDiv = document.getElementById("notificationsDiv");
-    notificationsDiv.style.display = "none";
+    $("#notificationsDiv").toggle("up");
 };
 
 var closeGallery = () => {
-    let galleryDiv = document.getElementById("galleryDiv");
-    galleryDiv.style.display = "none";
+    $("#galleryDiv").toggle("up");
 };
 
 /*$(".viewFullProfileBtn").click(function(event){
     alert("clicked");
     showFullProfileDiv();
 });*/
+
+$("#YourDrinkRequestMenuOption").click(function(event){
+    showUserProfile();
+    showYourDrinkRequests();
+});
+
+$("#closeYourDrinkRequestsDivBtn").click(function(event){
+    showYourDrinkRequests();
+});
 
 $("#closeUserActivityBtn").click(function(event){
     closeUserActivity();
@@ -302,6 +313,104 @@ $("#viewDrinkOffersBtn").click(function(event){
 $("#MenuOptionSearch").click(function(event){
     showExploreRestaurantsDiv();
 });
+
+function show_postpone_dinner_date_form(number){
+    let ddf_elem = "postpone_dinner_date_form"+number;
+    let update_btns_elem = "update_dinner_date_btns"+number;
+    
+    $("#"+ddf_elem).toggle('top');
+    $("#"+update_btns_elem).toggle('top');
+    
+}
+
+function show_cancel_dinner_date_form(number){
+    let ddf_elem = "cancel_dinner_date_form"+number;
+    let update_btns_elem = "update_dinner_date_btns"+number;
+    
+    $("#"+ddf_elem).toggle('top');
+    $("#"+update_btns_elem).toggle('top');
+    
+}
+
+function show_delete_request_form(number){
+    let dlt_dr_elem = "delet_drink_request_form"+number;
+    let update_dr_btns_elem = "update_your_drink_request_list_btns"+number;
+    
+    $("#"+dlt_dr_elem).toggle('top');
+    $("#"+update_dr_btns_elem).toggle('top');
+}
+
+function check_if_drink_offers_list_node_are_all_hidden(){
+    let drink_offers_list = document.getElementById("drink_offers_list");
+    let isAllHidden = true;
+    
+    if(drink_offers_list.hasChildNodes()){
+        Array.from(drink_offers_list.childNodes).forEach(item => {
+            
+            if($(item).is(':visible')){
+                isAllHidden = false;
+            }
+            /*if(typeof item.style !== "undefined"){
+                if(item.style.display === "block"){
+                    isAllHidden = false;
+                }
+            }*/
+
+        });
+    }else{
+        isAllHidden = true;
+    }
+    
+    if(isAllHidden){
+        document.getElementById("available_offers_p").style.display = "none";
+        if(document.getElementById("see_highest_bidder_btn"))
+            document.getElementById("see_highest_bidder_btn").style.display = "none";
+        no_available_drink_offers_msg.style.display = "block";
+        ViewOffererFullProfileAndMakeOfferBtns.style.display = "none";
+    }else{
+        no_available_drink_offers_msg.style.display = "none";
+        if(document.getElementById("see_highest_bidder_btn"))
+            document.getElementById("see_highest_bidder_btn").style.display = "block";
+        ViewOffererFullProfileAndMakeOfferBtns.style.display = "flex";
+        document.getElementById("available_offers_p").style.display = "block";
+    }
+}
+
+setInterval(check_if_drink_offers_list_node_are_all_hidden ,1);
+
+function check_if_drink_request_list_node_are_all_hidden(){
+    let drink_requests_list = document.getElementById("drink_requests_list");
+    let isAllHidden = true;
+    
+    if(drink_requests_list.hasChildNodes()){
+        Array.from(drink_requests_list.childNodes).forEach(item => {
+            
+            if($(item).is(':visible')){
+                isAllHidden = false;
+            }
+            /*if(typeof item.style !== "undefined"){
+                if(item.style.display === "block"){
+                    isAllHidden = false;
+                }
+            }*/
+
+        });
+    }else{
+        isAllHidden = true;
+    }
+    
+    if(isAllHidden){
+        document.getElementById("available_requests_p").style.display = "none";
+        no_available_drink_request_msg.style.display = "block";
+        ViewRequesteeFullProfileAndMakeOfferBtns.style.display = "none";
+    }else{
+        ViewRequesteeFullProfileAndMakeOfferBtns.style.display = "flex";
+        no_available_drink_request_msg.style.display = "none";
+        document.getElementById("available_requests_p").style.display = "block";
+    }
+}
+
+setInterval(check_if_drink_request_list_node_are_all_hidden ,1);
 
 function showRestaurantsPopupListByAddress() {
   let RestaurantList = document.getElementById("RestaurantList");

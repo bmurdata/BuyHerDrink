@@ -7,6 +7,7 @@ var RP_rest_icon = document.getElementById("RP_rest_icon");
 var RP_rest_rating = document.getElementById("RP_rest_rating");
 var RP_rest_location = document.getElementById("RP_rest_location");
 var RP_rest_types = document.getElementById("RP_rest_types");
+var RP_post_request_btn = document.getElementById("RP_post_request_btn");
 var drink_requests_list = document.getElementById("drink_requests_list");
 var drink_offers_list = document.getElementById("drink_offers_list");
 var current_selected_drink_request = document.getElementById("current_selected_drink_request");
@@ -26,14 +27,14 @@ var customizeOfferBtn = document.getElementById("customizeOfferBtn");
 var drink_request_status_P = document.getElementById("drink_request_status_P");
 var drink_bidding_form = document.getElementById("drink_bidding_form");
 var drink_request_comments_div = document.getElementById("drink_request_comments_div");
-
+var PDR_details_pane = document.getElementById("PDR_details_pane");
 
 //In memory Object to hold processes data
 var publish_request_data = {
     "request_id": "created on server",
     "request_purpose": "Drink",
     "rest_location": "1913 Bronxdale Ave, The Bronx",
-    "rest_name": "F&J Pine",
+    "rest_name": null,
     "rest_rating": 5,
     "rest_photo": "url from google",
     "rest_category_icon": "from google places",
@@ -55,13 +56,52 @@ var send_drink_offer_data = {
     
 };
 
+var highest_bidder = {
+    "added_message": "This request was so good it needed a 50.00 offer from me",
+    "meeting_budget": "$50.00",
+    "meeting_date": "09/04/2020",
+    "meeting_time": "14:00",
+    "request_id": 24,
+    "request_purpose": "Drink",
+    "bidder_address": "3423 River Ave, Albany, NY",
+    "bidder_age": 21,
+    "bidder_coverphoto": null,
+    "bidder_gender": "female",
+    "bidder_id": 252,
+    "bidder_name": "Kristina Rodriquez",
+    "bidder_propic": null,
+    "rest_category_icon": null,
+    "rest_location": "1913 Bronxdale Ave, The Bronx",
+    "rest_name": "F&J Pine",
+    "rest_photo": null,
+    "rest_rating": 5,
+    "rest_service_types": null
+};
+
+
 //Gobal variables for various utility functions
+var type_of_search = "restaurant";
 var current_drink_offer_item = "";
 var current_drink_request_item = "";
 var currentDate = new Date();
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //DOM manipulation functions
+
+//cleaning the slate after drink request post and update
+function clean_slate_after_drink_request(){
+    rest_locations_input_fld.value = '';
+    search_rest_by_name_fld.value = '';
+    
+    $("html, body").animate({ scrollTop: 0 }, "fast");
+    
+    RP_rest_name.innerHTML = `<i class='fa fa-exclamation-triangle' style='color: red;'></i> <span>no restaurant chosen</span>`;
+    RP_rest_photo.src = "";
+    RP_rest_icon.src = "";
+    RP_rest_rating = document.getElementById("RP_rest_rating");
+    RP_rest_location.innerHTML = `<i class='fa fa-exclamation-triangle' style='color: red;'></i> <span>no restaurant chosen</span></span>`;
+    RP_rest_types.innerHTML = `<i class='fa fa-exclamation-triangle' style='color: red;'></i> <span>no restaurant chosen</span>`;
+}
 
 //this function displays selected restaurants for drink request to review and post pane
 function pick_restaurant(name, photoUrl, iconUrl, rating, locationAddress, typesList, rating_number){
@@ -73,6 +113,7 @@ function pick_restaurant(name, photoUrl, iconUrl, rating, locationAddress, types
     RP_rest_types.innerText = typesList;
     hideRestaurantPopupListByAddress();
     add_selected_rest_post_data(name, rating_number, photoUrl, iconUrl, typesList, locationAddress);
+    search_rest_by_name_fld.value = name;
 }
 
 //this function renders drink requests to list that displays them
@@ -109,7 +150,7 @@ function render_drink_request_to_list(number, requestee_name, requestee_gender, 
 //this function renders drink offers to list that displays them
 //it also add a click event listener to each request in the list thats used to diplay the selected user and drink offer info
 
-function render_drink_offers_to_list(drink_offer_counter, date_party_id, drink_offer_id, requestee_name, requestee_gender, requestee_age, requestee_address, request_purpose, restaurant, location, date, time, budget, message){
+function render_drink_offers_to_list(drink_offer_counter, date_party_id, drink_offer_id, drink_request_id, requestee_name, requestee_gender, requestee_age, requestee_address, request_purpose, restaurant, location, date, time, budget, message){
     
     let td = document.createElement("td");
     td.classList.add("OfferesListCoverPhoto");
@@ -124,6 +165,7 @@ function render_drink_offers_to_list(drink_offer_counter, date_party_id, drink_o
         render_each_selected_drink_offer_user(requestee_name, requestee_age, requestee_gender, requestee_address);
         add_dinner_date_data(date_party_id, drink_offer_id);
         set_current_drink_offer_item("drink_offer_"+ drink_offer_counter);
+        get_highest_bidder(drink_request_id);
     });
     
     td.innerHTML = `
@@ -158,7 +200,7 @@ function render_each_selected_drink_request(restaurant, purpose, location, date,
                             <p id="beat_bid_btn"
                                style="color: white; font-size: 14px; border-radius: 4px; padding: 10px; background-color: darkslateblue; text-align: center; margin: 5px 0;">beat current bid: $50.00</p>
                         </div>
-                        <div style="padding: 10px; border-top: 1px solid darkgrey;">
+                        <div style="padding: 10px;">
                             <p style="font-size: 14px; font-weight: bolder; text-align: center; color: navy;">Added Message</p>
                             <p style="font-size: 14px;">
                                 ${message}
@@ -216,12 +258,16 @@ function render_each_selected_drink_offer(restaurant, purpose, location, date, t
                                 <img style="margin-right: 15px;" class="RegularIcons_2" src="icons/icons8-watch-filled-30.png" alt=""/>
                                 <span style="color: tomato; font-size: 14px;">${date}</span> - <span style="color: tomato; font-size: 14px;">${time}</span><br/>
                                 <img style="margin-right: 15px;" class="RegularIcons_2" src="icons/icons8-cash-50.png" alt=""/>
-                                <span style="color: tomato; font-size: 14px;">${budget} -
-                                    <span style="color: darkgreen; font-size: 14px; font-weight: bolder;">see highest bidder: $50.00</span>
-                                </span>
+                                <span style="color: tomato; font-size: 14px;">${budget} </span>
+                            </p>
+                            <p id="see_highest_bidder_btn" 
+                                        style="color: darkgreen; font-size: 14px; font-weight: bolder; padding: 5px; border-radius: 4px; 
+                                                background-color: darkslateblue; color: white; margin: 5px 0; max-width: 250px; text-align: center;">
+                                    see highest bidder: ${highest_bidder.meeting_budget}
+                              
                             </p>
                         </div>
-                        <div style="padding: 10px; border-top: 1px solid darkgrey;">
+                        <div style="padding: 10px;">
                             <p style="font-size: 14px; font-weight: bolder; text-align: center; color: navy;">Added Message</p>
                             <p style="font-size: 14px;">
                                 ${message}
@@ -232,6 +278,14 @@ function render_each_selected_drink_offer(restaurant, purpose, location, date, t
     $("HTML, BODY").animate({
             scrollTop: 0
         }, 300);
+        
+        document.getElementById("see_highest_bidder_btn").addEventListener("click", (evnt) => {
+            render_each_selected_drink_offer(highest_bidder.rest_name, highest_bidder.request_purpose, highest_bidder.rest_location, highest_bidder.meeting_date, highest_bidder.meeting_time, highest_bidder.meeting_budget, highest_bidder.added_message);
+            render_each_selected_drink_offer_user(highest_bidder.bidder_name, highest_bidder.bidder_age, highest_bidder.bidder_gender, highest_bidder.bidder_address);
+            document.getElementById("see_highest_bidder_btn").style.display = "none";
+            //console.log("rendering highest bidder");
+            
+        });
 }
 
 //this function renders each selected drink offer's user info
@@ -259,7 +313,7 @@ function render_each_selected_drink_offer_user(name, age, gender, address){
 }
 
 //this function renders dinner dates
-function render_dinner_date(name, gender, age, address, rest_name, rest_location, meeting_date, meeting_time, meeting_purpose, meeting_price){
+function render_dinner_date(index, name, gender, age, address, rest_name, rest_location, meeting_date, meeting_time, meeting_purpose, meeting_price){
     let div = document.createElement("div");
     div.innerHTML = `
                 <div class="each_date_details_div">
@@ -278,12 +332,41 @@ function render_dinner_date(name, gender, age, address, rest_name, rest_location
                         <p style="font-size: 14px;">${rest_location}</p>
                         <p style="font-size: 14px;">${meeting_date} at ${meeting_time} - ${meeting_price}</p>
                     </div>
-                    <div style='display: flex; padding: 10px; justify-content: space-between;'>
-                        <div style="padding: 10px; background-color: #37a0f5; border-radius: 5px;">
+                    <div class='postpone_dinner_date_form' id="postpone_dinner_date_form${index}">
+                        <p style="text-align: center; color: white; font-weight: bolder; margin: 5px 0;">Postpone this date</p>
+                        <div style="display: flex; justify-content: center;">
+                            <div style="width: 300px;">
+                                <input style="margin-right: 5px;" id="postpone_dinner_date_fld${index}" class="postpone_dinner_date_fld" type="text" />
+                                <input class="postpone_dinner_time_fld" id="postpone_dinner_time_fld${index}" type="text" />
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: center; padding: 5px;">
+                            <div class="postpone_dinner_date_btns">
+                                <div class='update_dinner_date_btn'>Update</div>
+                                <div onclick="show_postpone_dinner_date_form('${index}');" class='cancel_update_dinner_date_btn'>Cancel</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class='cancel_dinner_date_form' id="cancel_dinner_date_form${index}">
+                        <p style="text-align: center; color: white; font-size: 15px; font-weight: bolder; margin: 5px 0;">
+                            <i class="fa fa-exclamation" style="color: red;"></i> Are you sure you want to cancel this date
+                        </p>
+                        
+                        <div style="display: flex; justify-content: center; padding: 5px;">
+                            <div class="cancel_dinner_date_btns">
+                                <div class='cancel_dinner_date_yes_btn'>Yes</div>
+                                <div onclick="show_cancel_dinner_date_form('${index}');" class='_cancel_dinner_date_no_btn'>No</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                         id="update_dinner_date_btns${index}" 
+                         class="update_dinner_date_btns" style='display: flex; padding: 10px; justify-content: space-between;'>
+                        <div onclick="show_postpone_dinner_date_form('${index}');" style="padding: 10px; background-color: #37a0f5; border-radius: 5px;">
                             <p style="font-size: 14px;">Postpone</p>
                         </div>
-                        <div style="padding: 10px; background-color: #98d7ff; border-radius: 5px; margin-left: 10px; background-color: crimson">
-                            <p style="font-size: 14px;">Cancel</p>
+                        <div onclick="show_cancel_dinner_date_form('${index}');" style="padding: 10px; background-color: #98d7ff; border-radius: 5px; margin-left: 10px; background-color: crimson">
+                            <p style="font-size: 14px;">Cancel Date</p>
                         </div>
                     </div>
             </div>
@@ -292,6 +375,7 @@ function render_dinner_date(name, gender, age, address, rest_name, rest_location
 }
 
 $("#PDR_date_fld").datepicker({ minDate: 0 }).datepicker("setDate", currentDate);
+$("#postpone_dinner_date_fld0").datepicker({ minDate: 0 }).datepicker("setDate", currentDate);
 
 setInterval(()=>{
     let picked_date = document.getElementById("PDR_date_fld").value;
@@ -396,7 +480,7 @@ function get_recent_ten_drink_offers(clientId){
             current_drink_offer_item = "drink_offer_0";
             
             offer_list.forEach( (request, index) => {
-                render_drink_offers_to_list(index,"new_date_party_id", "new_drink_offer_id", request.requestee_name, request.requestee_gender, request.requestee_age, request.requestee_address, request.request_purpose, request.rest_name, request.rest_location, request.meeting_date, request.meeting_time, request.meeting_budget, request.added_message);
+                render_drink_offers_to_list(index,"new_date_party_id", "new_drink_offer_id", "new_drink_request_id", request.requestee_name, request.requestee_gender, request.requestee_age, request.requestee_address, request.request_purpose, request.rest_name, request.rest_location, request.meeting_date, request.meeting_time, request.meeting_budget, request.added_message);
             });
         }
     });
@@ -411,15 +495,30 @@ function get_recent_ten_dinner_dates(user_id){
         data: "user_id="+user_id,
         success: function(result){
             let data = JSON.parse(result);
-            data.forEach(item => {
-                console.log(item);
-                render_dinner_date(item.date_name, item.date_gender, item.date_age, item.date_address,
+            data.forEach((item, index) => {
+                render_dinner_date(index, item.date_name, item.date_gender, item.date_age, item.date_address,
                                     item.rest_name, item.rest_location, item.meeting_date, 
                                     item.meeting_time, item.meeting_purpose, item.meeting_pric
                                 );
             });
         }
     });
+}
+
+//getting highest bidder for each request
+function get_highest_bidder(drink_request_id){
+    console.log(drink_request_id);
+    $.ajax({
+        type: "GET",
+        url: "./get_highest_bidder",
+        data: "drink_request_id="+drink_request_id,
+        success: function(result){
+            let obj = JSON.parse(result);
+            highest_bidder = obj;
+        }
+    });
+    
+    document.getElementById("see_highest_bidder_btn").innerText = "see highest bidder: " + highest_bidder.meeting_budget;
 }
 
 //functions that collect data for various processes
@@ -455,15 +554,65 @@ function post_drink_request(data){
         url: "./post_drink_request_controller",
         data: JSON.stringify(data),
         success: function(result){
-            //alert(result);
+            publish_request_data.rest_name = null;
+            clean_slate_after_drink_request();
         }
     });
 }
 
+function update_drink_request(data){
+    //ajax code here
+    //then success funtion here
+    alert("drink request updated");
+    RP_update_request_btn.style.display = "none";
+    RP_post_request_btn.style.display = "flex";
+    publish_request_data.rest_name = null;
+    clean_slate_after_drink_request();
+    
+}
+
 $("#RP_post_request_btn").click(function(event){
+    //alert(RP_post_request_btn.disabled);
     post_drink_request(publish_request_data);
 });
 
+$("#RP_update_request_btn").click(function(evnt){
+    update_drink_request(publish_request_data);
+});
+
+function start_update_drink_request(number, user_id, drink_request_id, date, time, rest_name, types, rating, rating_number, iconUrl, purpose, rest_location, price, imgurl){
+    let each_your_dr = "each_your_drink_request_div"+number;
+    $("#"+each_your_dr).slideUp("fast");
+    
+    /*$("#search_rest_by_name_fld").val(rest_name + " " + rest_location).trigger('change');
+    document.getElementById("search_rest_by_name_fld").click();
+    
+    $.ajax({
+        url: "https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyAoltHbe0FsMkNbMCAbY5dRYBjxwkdSVQQ&address="+rest_location+"&sensor=false",
+        type: "POST",
+        success: function(res){
+           initMap(res.results[0].geometry.location.lat, res.results[0].geometry.location.lng, '1000');
+        }
+      });*/
+    
+    RP_post_request_btn.style.display = "none";
+    RP_update_request_btn.style.display = "flex";
+    
+    rest_locations_input_fld.value = rest_location;
+    PDR_date_fld.value = date;
+    PDR_time_fld.value = time;
+    PDR_price_fld.value = price;
+    
+    pick_restaurant(rest_name, imgurl, iconUrl, rating, rest_location, types, rating_number);
+    
+    //this hides drink requests div since its a toggle
+    showYourDrinkRequests();
+    
+    search_rest_by_name_fld.value = rest_name + " " + rest_location;
+    search_rest_by_name_fld.focus();
+    document.getElementById("publish_drink_request_fields").scrollIntoView();
+    document.getElementById("search_rest_by_name_fld").scrollTop = 0;
+}
 
 function post_dinner_date(data, current_item){
     console.log(data.user_id);
@@ -516,3 +665,16 @@ $(document).ready(()=>{
     get_recent_ten_drink_offers("jkdhise43hkjJJdjkI4h8dGN09lskw");
     get_recent_ten_dinner_dates("jkdhise43hkjJJdjkI4h8dGN09lskw");
 });
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//functions that enforce checks
+
+setInterval(()=>{
+    if(publish_request_data.rest_name === null){
+        document.getElementById("RP_post_request_btn").style.backgroundColor = "darkgrey";
+        document.getElementById("RP_post_request_btn").disabled = "true";
+    }else{
+        document.getElementById("RP_post_request_btn").style.backgroundColor = "darkslateblue";
+        document.getElementById("RP_post_request_btn").disabled = "false";
+    }
+}, 1);

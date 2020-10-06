@@ -12,8 +12,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Login/Register</title>
         <link href="StyleSheets/login_styles.css" rel="stylesheet" type='text/css' />
-        <script src="http://code.jquery.com/jquery-latest.js"></script>
-        <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+        <script src="https://code.jquery.com/jquery-latest.js"></script>
+        <script src="https://code.jquery.com/jquery-latest.min.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
         
         <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
@@ -38,7 +38,7 @@
             <p style='margin: 10px 0; color: darkgrey; font-weight: bolder; opacity: 0.8; text-align: center;'>&copy; 2020, BuyMeDrink</p>
         </div>
         <header>
-            <h1>BuyMeDrink</h1>
+            <p style='text-align: center;'><img src='buyherdrinkLOGO.png' style='width: 120px; height: auto;' /></p>
             <p style="text-align: center; margin-top: -10px;">&copy; 2020, all rights reserved</p>
             <p style="text-align: center; color: darkblue; font-weight: bolder;">
                 <i id="lgn_snp_pg_status_icon" class="fa fa-exclamation-triangle" style="color: red;"></i>
