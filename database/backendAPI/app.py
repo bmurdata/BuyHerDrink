@@ -126,9 +126,9 @@ api.add_resource(PostRegister,"/createpost")
 api.add_resource(tester.Test_UserEdit,"/editself")
 
 
-if __name__ == "__main__":
-    db.init_app(app)
-    app.run(port=5000, debug=True)
-else:
-    db.init_app(app)
-    app.run(port=5000, debug=True)
+#if __name__ == "__main__":
+    #db.init_app(app)
+    #app.run(port=5000, debug=True)
+#else:
+db.init_app(app)
+   # app.run(port=5000, debug=True)
