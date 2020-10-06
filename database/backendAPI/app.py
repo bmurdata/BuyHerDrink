@@ -129,4 +129,4 @@ api.add_resource(tester.Test_EditPostList,"/editposts")
 api.add_resource(tester.Test_EditPost,"/edit/post/<int:post_id>","/edit/post/")
 
 
-    db.init_app(app)
+db.init_app(app)
