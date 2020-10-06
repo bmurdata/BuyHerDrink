@@ -128,9 +128,5 @@ api.add_resource(tester.Test_UserEdit,"/editself")
 api.add_resource(tester.Test_EditPostList,"/editposts")
 api.add_resource(tester.Test_EditPost,"/edit/post/<int:post_id>","/edit/post/")
 
-if __name__ == "__main__":
+
     db.init_app(app)
-    app.run(port=5000, debug=True)
-else:
-    db.init_app(app)
-    app.run(port=5000, debug=True)
