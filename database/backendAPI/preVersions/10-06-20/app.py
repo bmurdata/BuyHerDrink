@@ -3,9 +3,9 @@ from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from flask_sqlalchemy import SQLAlchemy
 from db import db,connection_string
-from resources.user import UserRegister, UserLogin, User, TokenRefresh, UserLogout,Username,GetAll,EditUser
-from resources.posts import Post,AllPosts,PostRegister,EditPost
-import resources.testEditor as tester
+from resources.user import UserRegister, UserLogin, User, TokenRefresh, UserLogout,Username,GetAll
+from resources.posts import Post,AllPosts,PostRegister
+
 from flask import jsonify
 
 from blacklist import BLACKLIST
@@ -23,7 +23,7 @@ app.config["JWT_BLACKLIST_TOKEN_CHECKS"] = [
     "refresh",
 ]  # allow blacklisting for access and refresh tokens
 app.config['JWT_SECRET_KEY']='TestingMagic'
-app.config['JWT_TOKEN_LOCATION'] = ['cookies','headers']
+app.config['JWT_TOKEN_LOCATION'] = ['cookies','header']
 app.config['JWT_COOKIE_CSRF_PROTECT'] = False
 api = Api(app)
 
@@ -35,7 +35,6 @@ def index():
     test=db.engine.execute("SELECT COUNT(*) FROM posts;")
     print(test.fetchall())
     return render_template('index.html')
-
 
 
 jwt = JWTManager(app)
@@ -117,18 +116,13 @@ api.add_resource(Username, "/username/<string:name>")
 api.add_resource(UserLogin, "/login")
 api.add_resource(TokenRefresh, "/refresh")
 api.add_resource(UserLogout, "/logout")
-api.add_resource(EditUser,"/edituser")
 api.add_resource(GetAll,"/getusers")
 api.add_resource(Post,"/mypost")
-api.add_resource(EditPost,"/editpost")
 api.add_resource(AllPosts,"/allposts")
 api.add_resource(PostRegister,"/createpost")
-api.add_resource(tester.Test_UserEdit,"/editself")
-
-
-if __name__ == "__main__":
-    db.init_app(app)
-    app.run(port=5000, debug=True)
-else:
-    db.init_app(app)
-    app.run(port=5000, debug=True)
+#if __name__ == "__main__":
+    #db.init_app(app)
+#    app.run(port=5000, debug=True)
+#else:
+db.init_app(app)
+app.run()
