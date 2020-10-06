@@ -130,7 +130,7 @@ class UserLogout(Resource):
         return resp
 
 class EditUser(Resource):
-     # Edit a post- take form data-Remove POST in production maybe
+     # Edit a post- take form data
     @classmethod
     @jwt_required
     def post(cls):
