@@ -130,3 +130,4 @@ api.add_resource(tester.Test_EditPost,"/edit/post/<int:post_id>","/edit/post/")
 
 
 db.init_app(app)
+#app.run(port=5000, debug=True)
