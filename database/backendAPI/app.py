@@ -3,12 +3,19 @@ from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from flask_sqlalchemy import SQLAlchemy
 from db import db,connection_string
+# Marshmallow for serialization
+from ma import ma
+# Import resources aka API endpoints
 from resources.user import UserRegister, UserLogin, User, TokenRefresh, UserLogout,Username,GetAll,EditUser
-from resources.posts import Post,AllPosts,PostRegister,EditPost
-import resources.testEditor as tester
-from flask import jsonify
+from resources.posts import Post,AllPosts,PostRegister,EditPost,FindNearbyPosts
+from resources.offers import OfferRegister
 
+import resources.testEditor as tester
+# Jsonify to create responses as JSON, and secure file name for placing files
+from flask import jsonify
+from werkzeug.utils import secure_filename
 from blacklist import BLACKLIST
+
 
 app = Flask(__name__)
 #app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
@@ -25,6 +32,13 @@ app.config["JWT_BLACKLIST_TOKEN_CHECKS"] = [
 app.config['JWT_SECRET_KEY']='TestingMagic'
 app.config['JWT_TOKEN_LOCATION'] = ['cookies','headers']
 app.config['JWT_COOKIE_CSRF_PROTECT'] = False
+
+# For uploading Images and such
+# UPLOAD_FOLDER = '/uploads'
+# ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+# app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+# app = Flask(__name__)
+
 api = Api(app)
 
 @app.route('/')
@@ -123,11 +137,18 @@ api.add_resource(Post,"/mypost")
 api.add_resource(EditPost,"/editpost")
 api.add_resource(AllPosts,"/allposts")
 api.add_resource(PostRegister,"/createpost")
+api.add_resource(OfferRegister,"/createoffer")
+api.add_resource(FindNearbyPosts,"/findnearby")
 
 api.add_resource(tester.Test_UserEdit,"/editself")
 api.add_resource(tester.Test_EditPostList,"/editposts")
 api.add_resource(tester.Test_EditPost,"/edit/post/<int:post_id>","/edit/post/")
 
-
-db.init_app(app)
-#app.run(port=5000, debug=True)
+if __name__ == "__main__":
+    db.init_app(app)
+    ma.init_app(app)
+    app.run(port=5000, debug=True)
+else:
+    db.init_app(app)
+    ma.init_app(app)
+    app.run(port=5000, debug=True)
